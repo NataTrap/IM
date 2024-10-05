@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {ProductService} from "../../../shared/services/product.service";
 import {ProductType} from "../../../../types/product.type";
 import {CategoryService} from "../../../shared/services/category.service";
@@ -59,6 +59,23 @@ export class CatalogComponent implements OnInit {
         }
         this.cart = data as CartType
 
+
+        this.activeParams.page = 1;
+
+        let queryParams = { ...this.activeParams };
+
+        if (!queryParams.page) {
+          queryParams.page = 1;
+        }
+
+        this.router.navigate(['/catalog'], {
+          queryParams: queryParams
+        });
+
+
+
+
+
         if (this.authService.getIsLoggedIn()) {
 
           this.favouriteService.getFavourites()
@@ -84,6 +101,14 @@ export class CatalogComponent implements OnInit {
       })
 
   }
+
+  @HostListener('document:click', ['$event'])
+  onClick(event: MouseEvent) {
+    if (!(event.target as HTMLElement).closest('.catalog-sorting')) {
+      this.sortingOpen = false;
+    }
+  }
+
 
 
   processCatalog() {
